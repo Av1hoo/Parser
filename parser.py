@@ -4,8 +4,29 @@
 # 2. Validate data based on provided business logic
 # 3. Store valid results in an SQLite database
 # 4. Provide a web interface for user interaction (is OK to skip CSS styling)
+from flask import Flask, render_template, request, redirect, url_for
 
-# 1. Parser
-# 1.1. Parse CSV files
+# web interface
+app = Flask(__name__)
 
-# 1.2. Parse Excel files
+# load the files
+files = []
+
+# parse the files
+def parse_files(files):
+    pass
+
+# validate the data
+def validate_data(data):
+    pass
+
+# store the data
+def store_data(data):
+    pass
+
+# show that data
+def show_data():
+    pass
+
+if __name__ == '__main__':
+    app.run(debug=True)
