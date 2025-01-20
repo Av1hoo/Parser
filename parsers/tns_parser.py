@@ -42,6 +42,14 @@ class TNSParser(BaseParser):
                     # normalize
                     normalized_value = formultion_mean / control_mean if control_mean != 0 else 0
 
+                    result.append({
+                        "experiment_type": "TNS",
+                        "row": row_label,
+                        "formulation_id": formulation_id,
+                        "calculated_value": normalized_value,
+                        "is_valid": normalized_value > 10
+                    })
+
             return result
                     
 
