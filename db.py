@@ -1,6 +1,6 @@
 import sqlite3
 
-DB_FILE = 'resul.db'
+DB_FILE = 'result.db'
 INIT_SQL = """
 CREATE TABLE IF NOT EXISTS experiment_results (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

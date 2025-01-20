@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Stored Experiments{% endblock %}
+
+{% block content %}
+<h1>Stored Experiments</h1>
+<ul>
+  {% for exp in experiment_types %}
+    <li><a href="{{ url_for('view_results', experiment_type=exp) }}">{{ exp }}</a></li>
+  {% endfor %}
+</ul>
+{% endblock %}

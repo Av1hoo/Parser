@@ -4,8 +4,9 @@ from abc import abstractmethod
 
 class BaseParser:
     @abstractmethod
-    def __init__(self, file):
-        self.file = file
+    def __init__(self, file_name, file_path):
+        self.file_name = file_name
+        self.file_path = file_path
 
     @abstractmethod
     def detect(self):

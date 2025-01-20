@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}{{ experiment_type }} Results{% endblock %}
+
+{% block content %}
+<h1>Results for {{ experiment_type }} </h1>
+
+
+{% if records %}
+  <h2>Statistics</h2>
+  <ul>
+    <li>Median: {{ stats.Median }}</li>
+    <li>Mean: {{ stats.Mean }}</li>
+    <li>Standard Deviation: {{ stats.STD }}</li>
+  </ul>
+
+  <h2>Result Table</h2>
+  <table border="1" cellpadding="5">
+    <thead>
+      <tr>
+        <th>Formulation ID</th>
+        <th>Calculated Value</th>
+        <th>Valid?</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in records %}
+        <tr>
+          <td>{{ row.formulation_id }}</td>
+          <td>{{ row.calculated_value }}</td>
+          <td>{{ "✅" if row.is_valid else "❌" }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No results available for this experiment type.</p>
+{% endif %}
+
+{% endblock %}

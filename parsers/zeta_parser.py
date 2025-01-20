@@ -2,12 +2,12 @@ import polars as pl
 from .base_parser import BaseParser
 
 class ZetaParser(BaseParser):
-    def __init__(self, file):
-        super().__init__(file)
+    def __init__(self, file_name, file_path):
+        super().__init__(file_name, file_path)
 
     def detect(self):
         # Detect the appropriate parser based on file extension
-        extension = self.file.filename.split('.')[-1].lower() 
+        extension = self.file_name.filename.split('.')[-1].lower() 
         return extension in ['csv']
         
 
@@ -15,7 +15,7 @@ class ZetaParser(BaseParser):
         # The file is a csv file
         try:
             # Read the csv file
-            df = pl.read_csv(self.file)
+            df = pl.read_csv(self.file_path)
 
             # Rename the columns
             df = df.rename({
@@ -31,7 +31,7 @@ class ZetaParser(BaseParser):
             # group by formulation id
             grouped = (
                             formulation_df
-                            .groupby("SampleName", maintain_order=True)
+                            .group_by("SampleName", maintain_order=True)
                             .agg(pl.col("ZetaPotential").mean().alias("mean_reading"))
                         )
             

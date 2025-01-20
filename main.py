@@ -30,30 +30,37 @@ def upload_file():
         return render_template("error.html", message="No file part in the request.")
     
     file = request.files["file"]
+    # Debugging step (ensure `file` is a file object, not a string)
+    print("File object:", file)
+    print("File filename:", file.filename)
+
     if file.filename == "":
         return render_template("error.html", message="No file selected.")
+    # get the file name, relative path
+    file_path = os.path.relpath(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename)))
     file_name = secure_filename(file.filename)
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], file_name)
+    print("File path:", file_path)
     file.save(file_path)
 
     # try to parse and validate the file
     try:
-        results = parse_file(file_path)
-        db.insert_results(results)
+        # file path
+        results = parse_file(file, file_path)
+        db.add_results(results)
         # update the UI with the results
-        return _render_parsed_results(results)
+        return _render_parsed_results(results, file_name)
     except Exception as e:
         return render_template("error.html", message=str(e))
     
-def _render_parsed_results(results):
+def _render_parsed_results(results, file_name):
     if not results:
         return render_template("error.html", message="No data found in the file.")
     
     df = pl.DataFrame(results)
     stats = {
-        "Median": df["calculated_value"].median(),
-        "Mean": df["calculated_value"].mean(),
-        "STD": df["calculated_value"].std()
+        "median": df["calculated_value"].median(),
+        "mean": df["calculated_value"].mean(),
+        "std": df["calculated_value"].std()
     }
     experiment_type = results[0]["experiment_type"]
     records = [
@@ -65,7 +72,7 @@ def _render_parsed_results(results):
         for result in results
     ]
 
-    return render_template("results.html", experiment_type=experiment_type, stats=stats, records=records)
+    return render_template("results.html", experiment_type=experiment_type, stats=stats, records=records, file_name=file_name)
 
 @app.route('/experiments')
 def experiments():
@@ -93,8 +100,29 @@ def view_results(experiment_type):
         "STD": df["calculated_value"].std()
     }
 
-    records = df.to_dict(orient="records")
+    records = df.to_dicts()
     return render_template("results.html", experiment_type=experiment_type, stats=stats, records=records)
+
+@app.route('/all_results')
+def all_results():
+    rows = db.fetch_all_results()
+
+    if not rows:
+        return render_template("error.html", message="No data found in the database.")
+
+    df = pl.DataFrame(
+        {
+            "experiment_type": [row[0] for row in rows],
+            "formulation_id": [row[1] for row in rows],
+            "calculated_value": [row[2] for row in rows],
+            "is_valid": [row[3] for row in rows]
+        }
+    )
+
+    records = df.to_dicts() 
+
+    return render_template("all_results.html", records=records)
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
