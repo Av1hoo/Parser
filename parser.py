@@ -12,9 +12,16 @@ app = Flask(__name__)
 # load the files
 files = []
 
+
 # parse the files
 def parse_files(files):
-    pass
+    # Experiment Type: TNS - excel file
+    if files[0].filename.endswith('.xlsx'):
+        pass
+    # Experiment Type: Zeta Potential - csv file
+    elif files[0].filename.endswith('.csv'):
+        pass
+    
 
 # validate the data
 def validate_data(data):
